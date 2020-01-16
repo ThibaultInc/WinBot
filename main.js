@@ -33,8 +33,25 @@ client.on('guildCreate', guild => {
             .addField("Comment avoir la liste de mes commandes?", `Ceci est très simple, vous n'avez qu'à faire \`${config.prefix}help\``)
             .setThumbnail(client.user.displayAvatarURL)
             .setColor(config.color);
-        channel.send(embed);
+        channel.send(embed); // send message
     });
+});
+
+// On bot is start
+
+client.on('ready', () => {
+    console.log(`WinBot est prêt à être utilisé.`);
+    client.user.setActivity(`Besoin d'aide? Faites ${config.prefix}help.`, { type: "WATCHING" });
+});
+
+// On message was sent
+
+client.on('message', message => {
+    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+    const command = args.shift().toLowerCase();
+    // conditions
+    if (message.content.startsWith(config.prefix)) return;
+    if (message.author.bot || !message.guild) return;
 });
 
 // login bot
