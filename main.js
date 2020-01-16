@@ -113,6 +113,34 @@ client.on('message', message => {
             Propriétaire du serveur : ${Server.owner.tag}
         `);
     }
+    // userinfo command
+    if (command === "userinfo") {
+        let User = {
+            username: message.author.username,
+            id: message.author.id,
+            tag: message.author.tag,
+            avatar: message.author.displayAvatarURL,
+            roles: message.member.roles.size-1,
+            highest_role: {
+                name: message.member.highestRole.name.replace("@everyone", "Aucun."),
+                id: message.member.highestRole.id,
+                color: message.member.highestRole.color
+            },
+            status: message.author.presence.status.replace("offline", "Hors ligne.").replace("online", "En ligne.").replace("dnd", "Ne pas déranger.").replace("idle", "Inactif."),
+            game: message.author.presence.game ? message.author.presence.game.name : "Aucune activité."
+        }
+        message.channel.sendCode("", `
+            A propos de ${User.tag}
+
+            Nom : ${User.tag}
+            Nom d'utilisateur : ${User.username}
+            ID : ${User.id}
+            Rôle(s) : ${User.roles}
+            Rôle le plus haut : ${User.highest_role.name}
+            Statut : ${User.status}
+            Activité en cours : ${User.game}
+        `);
+    }
 });
 
 // login bot
