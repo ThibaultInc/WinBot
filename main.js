@@ -4,6 +4,12 @@ const client = new Discord.Client(); // Init client bot
 
 // Others modules
 
+const commands = {
+    utils: ["help", "serverinfo", "userinfo", "botinfo"],
+    moderation: ["join", "leave", "autorole"],
+    economy: ["money", "withdraw"],
+    game: ["account"]
+}
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('database.json');
@@ -55,6 +61,15 @@ client.on('message', message => {
     // help command
     if (command === "help") {
         // TODO: Réfléchir pour la mise en page des commandes
+        let embed = new Discord.RichEmbed()
+            .setTitle(`-- Liste des commandes --`)
+            .addField("-- Utilitaires --", `\`\`\`${commands.utils.join(', ')}\`\`\``)
+            .addField("-- Modération --", `\`\`\`${commands.moderation.join(', ')}\`\`\``)
+            .addField("-- Economie --", `\`\`\`${commands.economy.join(', ')}\`\`\``)
+            .addField("-- Guerre des serveurs --", `\`\`\`${commands.game.join(', ')}\`\`\``)
+            .setThumbnail(client.user.displayAvatarURL)
+            .setColor(config.color);
+        message.author.send(embed).then(message.reply("Nous vous avons envoyé la liste des commandes en privé."));
     }
 });
 
