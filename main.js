@@ -4,12 +4,13 @@ const client = new Discord.Client(); // Init client bot
 
 // Others modules
 
+const functions = require('./functions');
 const commands = {
-    utils: ["help", "serverinfo", "userinfo", "botinfo"],
-    moderation: ["join", "leave", "autorole"],
-    economy: ["money", "withdraw"],
-    game: ["account"]
-}
+    utils: ["help", "serverinfo", "userinfo", "botinfo", "rank"],
+    moderation: ["join", "leave", "create_shop", "add_item", "add_money", "autorole", "role", "channel", "reset_money", "reset_xp", "kick", "ban"],
+    economy: ["money", "withdraw", "shop", "buy", "give_money"],
+    game: ["account", "profil", "guild_profil", "leaderboard_game"]
+};
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('database.json');
@@ -60,9 +61,9 @@ client.on('message', message => {
     if (message.author.bot || !message.guild) return;
     // help command
     if (command === "help") {
-        // TODO: Réfléchir pour la mise en page des commandes
         let embed = new Discord.RichEmbed()
             .setTitle(`-- Liste des commandes --`)
+            .setDescription(`Salut à toi! Voici la liste des commandes. Avant tout, permet moi de te préciser qu'avant chaque commande, il est indispensable d'écrire \`${config.prefix}\` pour que je puisse vous comprendre.`)
             .addField("-- Utilitaires --", `\`\`\`${commands.utils.join(', ')}\`\`\``)
             .addField("-- Modération --", `\`\`\`${commands.moderation.join(', ')}\`\`\``)
             .addField("-- Economie --", `\`\`\`${commands.economy.join(', ')}\`\`\``)
@@ -70,6 +71,47 @@ client.on('message', message => {
             .setThumbnail(client.user.displayAvatarURL)
             .setColor(config.color);
         message.author.send(embed).then(message.reply("Nous vous avons envoyé la liste des commandes en privé."));
+    }
+    // serverinfo command
+    if (command === "serverinfo") {
+        let Server = {
+            name: message.guild.name,
+            id: message.guild.id,
+            members: message.guild.memberCount,
+            humans: message.guild.members.filter(member => !member.user.bot).size,
+            bots: message.guild.members.filter(member => member.user.bot).size,
+            onlines: message.guild.members.filter(member => member.presence.status !== "offline").size,
+            region: functions.firstLetterUpper(message.guild.region),
+            channels: message.guild.channels.filter(channel => channel.type !== "category").size,
+            textuals: message.guild.channels.filter(channel => channel.type === "text").size,
+            voices: message.guild.channels.filter(channel => channel.type === "voice").size,
+            categories: message.guild.channels.filter(channel => channel.type === "category").size,
+            roles: message.guild.roles.size-1,
+            owner: {
+                username: message.guild.owner.user.username,
+                tag: message.guild.owner.user.tag,
+                id: message.guild.ownerID,
+                avatar: message.guild.owner.user.displayAvatarURL
+            }
+        }
+        message.channel.sendCode('', `
+            Informations de : ${Server.name}
+
+            Nom : ${Server.name}
+            ID : ${Server.id}
+            Membre(s) : ${Server.members}
+            Humain(s) : ${Server.humans}
+            Robot(s) : ${Server.bots}
+            Connecté(s) : ${Server.onlines}
+            Région : ${Server.region}
+            Salon(s) : ${Server.channels}
+            Salon(s) textuel(s) : ${Server.textuals}
+            Salon(s) vocal(aux) : ${Server.voices}
+            Catégorie(s) : ${Server.categories}
+            Rôle(s) : ${Server.roles}
+            
+            Propriétaire du serveur : ${Server.owner.tag}
+        `);
     }
 });
 
