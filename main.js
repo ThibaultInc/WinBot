@@ -50,8 +50,12 @@ client.on('message', message => {
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
     // conditions
-    if (message.content.startsWith(config.prefix)) return;
+    if (!message.content.startsWith(config.prefix)) return;
     if (message.author.bot || !message.guild) return;
+    // help command
+    if (command === "help") {
+        // TODO: Réfléchir pour la mise en page des commandes
+    }
 });
 
 // login bot

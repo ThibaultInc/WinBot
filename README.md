@@ -1,2 +1,7 @@
 # WinBot
- WinBot is a french bot
+
+Pour commencer faites : 
+
+```
+-help
+```
