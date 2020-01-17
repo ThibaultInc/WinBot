@@ -142,6 +142,8 @@ client.on('message', message => {
         `);
     }
 
+    // botinfo command
+
     if (command === "botinfo") {
         let Bot = {
             username: client.user.username,
@@ -168,6 +170,8 @@ client.on('message', message => {
         `);
     }
 
+    // join command
+
     if (command === "join") {
         if (!message.member.hasPermission("ADMINISTRATOR")) return message.channel.send(":x: Vous n'avez pas les droits administrateurs :x:"); 
         let channel = message.mentions.channels.first();
@@ -185,6 +189,24 @@ client.on('message', message => {
         db.get('join').push({guild: message.guild.id, channel: channel.id, message: msg, date: `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`}).write();
         message.reply(`nous venons d'activer le module de bienvenue sur votre serveur. Les informations disent que le salon textuel est ${channel}.`);
     }
+
+    // leave command
+
+    if (command === "leave") {
+        if (!message.member.hasPermission("ADMINISTRATOR")) return message.channel.send(":x: Vous n'avez pas les droits administrateurs :x:"); 
+        let channel = message.mentions.channels.first();
+        let msg = args.slice(1).join(' ');
+        if (db.get('leave').find({guild: message.guild.id}).value()) {
+            let leave_object = db.get('leave').filter({guild: message.guild.id}).find('channel').value();
+            let leave = Object.values(leave_object);
+            db.get('leave').remove({guild: message.guild.id, channel: leave[1], message: leave[2], date: leave[3]}).write();
+            message.reply(`nous venons de désactiver le module de départ sur votre serveur.`);
+            return;
+        }
+        if (!channel) return message.channel.send(functions.syntaxError("/leave", "/leave <#ChannelMention> (message)\n\nInformations\n\n{member.user} : mention de l'utilisateur\n{server.name} : Nom du serveur\n{member.tag} : tag du membre\n{server.members} : nombre de membres."))
+        if (!msg) msg = "**{member.tag}** vient de quitter **{server.name}**.";
+    }
+    
 });
 
 // On Member Join Guild
