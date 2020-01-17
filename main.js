@@ -141,6 +141,62 @@ client.on('message', message => {
             Activité en cours : ${User.game}
         `);
     }
+
+    if (command === "botinfo") {
+        let Bot = {
+            username: client.user.username,
+            id: client.user.id,
+            tag: client.user.tag,
+            roles: message.guild.me.roles.size-1,
+            highest_role: {
+                name: message.guild.me.highestRole.name,
+                id: message.guild.me.highestRole.id,
+                color: message.guild.me.highestRole.color
+            },
+            status: message.guild.me.user.presence.status.replace("offline", "Hors ligne.").replace("online", "En ligne.").replace("dnd", "Ne pas déranger.").replace("idle", "Inactif."),
+            game: message.guild.me.user.presence.game ? message.guild.me.user.presence.game.name : "Aucune activité."
+        };
+        message.channel.sendCode("", `
+            Informations à propos de moi
+
+            Nom : ${Bot.tag}
+            ID : ${Bot.id}
+            Rôle(s) : ${Bot.roles}
+            Rôle le plus haut : ${Bot.highest_role.name}
+            Statut : ${Bot.status}
+            Activité en cours : ${Bot.game}
+        `);
+    }
+
+    if (command === "join") {
+        if (!message.member.hasPermission("ADMINISTRATOR")) return message.channel.send(":x: Vous n'avez pas les droits administrateurs :x:"); 
+        let channel = message.mentions.channels.first();
+        let msg = args.slice(1).join(' ');
+        if (db.get('join').find({guild: message.guild.id}).value()) {
+            let join_object = db.get('join').filter({guild: message.guild.id}).find('channel').value();
+            let join = Object.values(join_object);
+            db.get('join').remove({guild: message.guild.id, channel: join[1], message: join[2], date: join[3]}).write();
+            message.reply("nous venons de supprimer le module de bienvenue de votre serveur.");
+            return;
+        }
+        if (!channel) return message.channel.send(functions.syntaxError(`${config.prefix}${command}`, `${config.prefix}${command} <#ChannelMention> (Message)\n\nInformations: \n\n{member.user} : mention de l'utilisateur\n{server.name} : Nom du serveur\n{member.tag} : tag du membre\n{server.members} : nombre de membres.`));
+        if (!msg) msg = "{member.user} vient de rejoindre **{server.name}**.";
+        let date = new Date();
+        db.get('join').push({guild: message.guild.id, channel: channel.id, message: msg, date: `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`}).write();
+        message.reply(`nous venons d'activer le module de bienvenue sur votre serveur. Les informations disent que le salon textuel est ${channel}.`);
+    }
+});
+
+// On Member Join Guild
+
+client.on('guildMemberAdd', member => {
+    if (db.get('join').find({guild: member.guild.id}).value()) {
+        let join_object = db.get('join').filter({guild: member.guild.id}).find('channel').value();
+        let join = Object.values(join_object);
+        let channel = member.guild.channels.find('id', join[1]);
+        if (!channel) return;
+        channel.send(join[2].replace("{member.user}", member.user).replace("{member.tag}", member.user.tag).replace("{server.name}", member.guild.name).replace("{server.members}", member.guild.memberCount));  
+    }
 });
 
 // login bot

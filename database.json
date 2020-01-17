@@ -1,6 +1,19 @@
 {
   "logs": [],
-  "join": [],
+  "join": [
+    {
+      "guild": "665621954966847489",
+      "channel": "666021848970035320",
+      "message": "{member.user} vient de nous rejoindre ! Nous sommes à présent **{server.members}** sur le serveur!",
+      "date": "4/0/2020"
+    },
+    {
+      "guild": "625442235139489797",
+      "channel": "625442235659452449",
+      "message": "Hey {member.user} c'est moi Octo! Bienvenue sur la **{server.name}**!",
+      "date": "4/0/2020"
+    }
+  ],
   "leave": [],
   "autorole": []
 }
