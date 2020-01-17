@@ -10,6 +10,14 @@ var firstLetterUpper = (str) => {
     return str.replace(firstLetter, firstLetter.toUpperCase()); // return the good result
 }
 
+/**
+ * Affiche la bonne syntaxe d'une commande
+ * 
+ * @param {String} command 
+ * @param {String} syntax 
+ * 
+ * @returns { RichEmbed }
+ */
 var syntaxError = (command, syntax) => {
     let embedSyntax = new RichEmbed()
         .setTitle("-- Erreur syntaxe --")

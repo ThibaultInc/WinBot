@@ -1,7 +1,3 @@
 # WinBot
 
-Pour commencer faites : 
-
-```
--help
-```
+WinBot est un robot Discord développé par l'entreprise **Thibault Inc**.
